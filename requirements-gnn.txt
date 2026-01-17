@@ -1,0 +1,5 @@
+# GNN dependencies (optional)
+-r requirements.txt
+
+torch>=2.0,<3.0
+torch-geometric>=2.3,<3.0

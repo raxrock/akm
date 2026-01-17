@@ -1,0 +1,111 @@
+project_name: my_project
+data_dir: my_project/.akm
+log_level: !!python/object/apply:akm.core.config.LogLevel
+- INFO
+graph:
+  backend: neo4j
+  neo4j:
+    uri: bolt://localhost:7687
+    username: neo4j
+    password: ''
+    database: neo4j
+    max_connection_pool_size: 50
+    connection_timeout: 30
+    encrypted: false
+  memory:
+    persist_path: null
+vector:
+  backend: chromadb
+  chromadb:
+    persist_directory: ./.akm/chroma
+    collection_name: akm_default
+    host: null
+    port: null
+    anonymized_telemetry: false
+  default_chunk_size: 512
+  default_chunk_overlap: 50
+embedding:
+  provider: sentence_transformers
+  sentence_transformers:
+    model_name: all-MiniLM-L6-v2
+    device: cpu
+    batch_size: 32
+  openai:
+    api_key: null
+    model: text-embedding-3-small
+    batch_size: 100
+llm:
+  orchestrator: langchain
+  langchain:
+    provider: openai
+    model_name: gpt-4
+    temperature: 0.0
+    max_tokens: 2000
+    api_key: null
+  llamaindex:
+    provider: openai
+    model_name: gpt-4
+    temperature: 0.0
+    chunk_size: 1024
+    chunk_overlap: 20
+links:
+  initial_soft_link_weight: 0.5
+  promotion_threshold: 0.8
+  demotion_threshold: 0.2
+  decay:
+    enabled: true
+    decay_rate: 0.01
+    decay_interval_hours: 24
+    minimum_weight: 0.1
+  validation:
+    positive_weight_boost: 0.1
+    negative_weight_penalty: 0.15
+    auto_validate_threshold: 0.9
+gnn:
+  enabled: false
+  framework: pyg
+  link_prediction_enabled: true
+  link_prediction_model: GraphSAGE
+  link_prediction_threshold: 0.7
+  community_detection_enabled: true
+  community_detection_algorithm: Louvain
+  hidden_dim: 64
+  num_layers: 2
+  dropout: 0.5
+  learning_rate: 0.01
+  epochs: 100
+ingestion:
+  batch_size: 100
+  parallel_workers: 4
+  deduplication_enabled: true
+  file_connector:
+    enabled: true
+    paths: []
+    extensions:
+    - .txt
+    - .md
+    - .pdf
+    - .py
+    - .js
+    - .ts
+    recursive: true
+    ignore_patterns:
+    - '*.pyc'
+    - __pycache__
+    - .git
+    - node_modules
+  slack_connector:
+    enabled: false
+    token: null
+    channels: []
+    fetch_threads: true
+domain:
+  name: software_engineering
+  schema_path: null
+  custom_embedding_model: null
+  prompt_templates_path: null
+plugins:
+  enabled: true
+  auto_discover: true
+  plugin_paths: []
+  disabled_plugins: []

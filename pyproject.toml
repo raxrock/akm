@@ -1,0 +1,113 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "akm"
+version = "0.1.0"
+description = "Adaptive Knowledge Mesh - An open-source framework combining knowledge graphs, vector databases, and GNNs for adaptive knowledge management"
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.10"
+authors = [
+    { name = "Rakshith Kumar Karkala", email = "rakshithkk40@gmail.com" }
+]
+keywords = [
+    "knowledge-graph",
+    "vector-database",
+    "rag",
+    "llm",
+    "graph-neural-network",
+    "semantic-search",
+    "knowledge-management"
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Database :: Database Engines/Servers",
+]
+
+dependencies = [
+    "pydantic>=2.0,<3.0",
+    "pydantic-settings>=2.0,<3.0",
+    "pyyaml>=6.0,<7.0",
+    "click>=8.0,<9.0",
+    "rich>=13.0,<14.0",
+    "neo4j>=5.0,<6.0",
+    "chromadb>=0.4,<1.0",
+    "sentence-transformers>=2.2,<3.0",
+    "langchain>=0.1,<1.0",
+    "langchain-openai>=0.0.5,<1.0",
+    "langchain-community>=0.0.10,<1.0",
+    "networkx>=3.0,<4.0",
+]
+
+[project.optional-dependencies]
+gnn = [
+    "torch>=2.0,<3.0",
+    "torch-geometric>=2.3,<3.0",
+]
+dev = [
+    "pytest>=7.0,<9.0",
+    "pytest-cov>=4.0,<6.0",
+    "pytest-asyncio>=0.21,<1.0",
+    "black>=23.0,<25.0",
+    "ruff>=0.1,<1.0",
+    "mypy>=1.0,<2.0",
+    "pre-commit>=3.0,<4.0",
+]
+all = [
+    "akm[gnn,dev]",
+]
+
+[project.scripts]
+akm = "akm.cli.main:main"
+
+[project.urls]
+Homepage = "https://github.com/raxrock/akm"
+Documentation = "https://github.com/raxrock/akm#readme"
+Repository = "https://github.com/raxrock/akm"
+Issues = "https://github.com/raxrock/akm/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["akm"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = "-v --cov=akm --cov-report=term-missing"
+
+[tool.black]
+line-length = 88
+target-version = ["py310", "py311", "py312"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # Pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+]
+ignore = [
+    "E501",  # line too long (handled by black)
+]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+plugins = ["pydantic.mypy"]

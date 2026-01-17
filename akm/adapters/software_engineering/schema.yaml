@@ -1,0 +1,196 @@
+# Software Engineering Domain Schema
+domain_name: "software_engineering"
+version: "1.0.0"
+description: "Domain schema for software engineering knowledge management"
+
+entity_types:
+  - name: "Repository"
+    base_type: "document"
+    description: "A code repository (Git, etc.)"
+    properties:
+      url: "string"
+      language: "string"
+      stars: "integer"
+      last_commit: "datetime"
+    required_properties:
+      - url
+    examples:
+      - "GitHub repository"
+      - "GitLab project"
+
+  - name: "CodeFile"
+    base_type: "document"
+    description: "A source code file"
+    properties:
+      path: "string"
+      language: "string"
+      lines_of_code: "integer"
+      complexity: "float"
+    required_properties:
+      - path
+      - language
+
+  - name: "Function"
+    base_type: "concept"
+    description: "A function or method in code"
+    properties:
+      signature: "string"
+      parameters: "list"
+      return_type: "string"
+      docstring: "string"
+    required_properties:
+      - signature
+
+  - name: "Class"
+    base_type: "concept"
+    description: "A class or type definition"
+    properties:
+      name: "string"
+      inheritance: "list"
+      interfaces: "list"
+    required_properties:
+      - name
+
+  - name: "Developer"
+    base_type: "person"
+    description: "A software developer or contributor"
+    properties:
+      github_username: "string"
+      email: "string"
+      expertise_areas: "list"
+
+  - name: "Issue"
+    base_type: "document"
+    description: "A bug report or feature request"
+    properties:
+      issue_id: "string"
+      status: "string"
+      priority: "string"
+      labels: "list"
+
+  - name: "PullRequest"
+    base_type: "document"
+    description: "A pull/merge request"
+    properties:
+      pr_id: "string"
+      status: "string"
+      reviewers: "list"
+      files_changed: "integer"
+
+  - name: "Architecture"
+    base_type: "concept"
+    description: "An architectural pattern or decision"
+    properties:
+      pattern_name: "string"
+      rationale: "string"
+      trade_offs: "list"
+
+  - name: "Dependency"
+    base_type: "concept"
+    description: "An external library or package dependency"
+    properties:
+      package_name: "string"
+      version: "string"
+      license: "string"
+
+  - name: "API"
+    base_type: "concept"
+    description: "An API endpoint or interface"
+    properties:
+      method: "string"
+      path: "string"
+      parameters: "list"
+      response_type: "string"
+
+relationship_types:
+  - name: "IMPORTS"
+    description: "One file imports another"
+    source_types: ["CodeFile"]
+    target_types: ["CodeFile", "Dependency"]
+
+  - name: "CONTAINS"
+    description: "Container relationship"
+    source_types: ["Repository", "CodeFile", "Class"]
+    target_types: ["CodeFile", "Function", "Class"]
+
+  - name: "CALLS"
+    description: "Function call relationship"
+    source_types: ["Function"]
+    target_types: ["Function"]
+
+  - name: "IMPLEMENTS"
+    description: "Implementation relationship"
+    source_types: ["Class", "Function"]
+    target_types: ["Architecture", "Class", "API"]
+
+  - name: "AUTHORED_BY"
+    description: "Authorship relationship"
+    source_types: ["CodeFile", "PullRequest", "Issue"]
+    target_types: ["Developer"]
+
+  - name: "REVIEWS"
+    description: "Code review relationship"
+    source_types: ["Developer"]
+    target_types: ["PullRequest"]
+
+  - name: "FIXES"
+    description: "Bug fix relationship"
+    source_types: ["PullRequest"]
+    target_types: ["Issue"]
+
+  - name: "DEPENDS_ON"
+    description: "Dependency relationship"
+    source_types: ["Repository", "CodeFile"]
+    target_types: ["Dependency"]
+
+  - name: "SIMILAR_TO"
+    description: "Semantic similarity between code entities"
+    source_types: ["Function", "Class", "CodeFile"]
+    target_types: ["Function", "Class", "CodeFile"]
+    bidirectional: true
+
+  - name: "EXPOSES"
+    description: "Service exposes an API"
+    source_types: ["Class", "Repository"]
+    target_types: ["API"]
+
+# Mapping from generic types
+generic_to_domain_entity_map:
+  person: "Developer"
+  document: "CodeFile"
+  concept: "Architecture"
+  organization: "Repository"
+
+generic_to_domain_relationship_map:
+  CREATED_BY: "AUTHORED_BY"
+  PART_OF: "CONTAINS"
+  DEPENDS_ON: "DEPENDS_ON"
+  REFERENCES: "IMPORTS"
+  SIMILAR_TO: "SIMILAR_TO"
+
+# Prompt templates
+extraction_prompt_template: |
+  You are analyzing software engineering content. Extract the following entities:
+  - Repositories, code files, functions, classes
+  - Developers and contributors
+  - Issues, pull requests
+  - Architectural patterns and decisions
+  - Dependencies and external libraries
+  - API endpoints
+
+  For each entity, identify:
+  1. The entity type from: Repository, CodeFile, Function, Class, Developer, Issue, PullRequest, Architecture, Dependency, API
+  2. Relevant properties
+  3. Confidence level (0-1)
+
+query_context_template: |
+  You are a software engineering expert assistant. The user is asking about:
+  - Code repositories and their structure
+  - Software architecture and design patterns
+  - Development workflows and practices
+  - Code quality and technical debt
+  - API design and implementation
+  - Dependencies and versioning
+
+  Focus on providing actionable insights for software development.
+  When discussing code, be specific about files, functions, and architectural decisions.

@@ -1,0 +1,48 @@
+project_name: "akm_test"
+data_dir: "./.akm"
+log_level: "INFO"
+
+# Use in-memory graph backend (no Neo4j required)
+graph:
+  backend: "memory"
+  memory:
+    persist_path: null
+
+# Enable ChromaDB vector backend
+vector:
+  backend: "chromadb"
+  chromadb:
+    persist_directory: "./.akm/chroma"
+    collection_name: "akm_documents"
+    anonymized_telemetry: false
+
+# Enable sentence-transformers embedding (local, no API key needed)
+embedding:
+  provider: "sentence_transformers"
+  sentence_transformers:
+    model_name: "all-MiniLM-L6-v2"
+    device: "cpu"
+
+# Use Azure OpenAI for LLM
+llm:
+  orchestrator: "langchain"
+  langchain:
+    provider: "azure_openai"
+    model_name: "gpt-4.1"
+    temperature: 0.0
+    max_tokens: 2000
+
+# Link configuration
+links:
+  initial_soft_link_weight: 0.5
+  promotion_threshold: 0.8
+  demotion_threshold: 0.2
+  decay:
+    enabled: true
+    decay_rate: 0.01
+    decay_interval_hours: 24
+    minimum_weight: 0.1
+
+# Domain
+domain:
+  name: "software_engineering"
